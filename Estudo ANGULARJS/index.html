@@ -26,19 +26,9 @@
     <script src="/angular-locale_pt-br.js"></script>
     <script>
        angular.module("Lista", []);
-       angular.module("Lista").controller("ListaCtrl", function ($scope, $filter){
+       angular.module("Lista").controller("ListaCtrl", function ($scope, $http){
           $scope.app = "lista";
-          $scope.contatos= [
-              {
-                  nome: $filter('uppercase') ("Pedro"), telefone:"999642319", cor: "pink", data: new Date(), operadora: {nome: "Oi", codigo: 14, categoria: "Celular"}
-              },
-              {
-                  nome: "Marcelo", telefone:"999642247", cor: "green", data: new Date(), operadora: {nome: "Vivo", codigo: 15, categoria: "Celular"}
-              },
-              {
-                  nome: "Rhyan", telefone:"9996423193", cor: "black", data: new Date(), operadora: { nome: "Tim", codigo: 41, categoria: "Celular" }
-              }
-          ];
+          $scope.contatos= []
           $scope.operadoras= [
               {
                   nome: "Oi", codigo: 14, categoria: "Celular", preco: 1
@@ -58,7 +48,7 @@
               }
           ];
           $scope.AdicionarContato = function (contato) {
-            $scope.contatos.push(angular.copy(contato));
+            contato.data= new Date();
             delete $scope.contato;
             $scope.contatoForm.$setPristine();
           };    
@@ -74,9 +64,15 @@
            };
            $scope.ordenarPor = function(campo){
                $scope.criterioDeOrdenacao = campo;
-               $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao
-           }
-       });
+               $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
+            }
+           var carregarContatos = function(){
+               $http.get("http://localhost:4567").success(function (data){
+                   $scope.contatos = data;
+              });
+            };
+            carregarContatos();
+        });
     </script>
 </head>
 <body ng-controller="ListaCtrl">
